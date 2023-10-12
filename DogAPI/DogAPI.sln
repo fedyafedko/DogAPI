@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogAPI", "DogAPI\DogAPI.csproj", "{E420834F-99BF-45A7-B0F3-74BBD107EB9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{F6632EEC-04B6-49F8-967C-37438C37ED58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{8AB8634B-6E20-400D-BF6D-3E3E89324894}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{E420834F-99BF-45A7-B0F3-74BBD107EB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E420834F-99BF-45A7-B0F3-74BBD107EB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E420834F-99BF-45A7-B0F3-74BBD107EB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6632EEC-04B6-49F8-967C-37438C37ED58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6632EEC-04B6-49F8-967C-37438C37ED58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6632EEC-04B6-49F8-967C-37438C37ED58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6632EEC-04B6-49F8-967C-37438C37ED58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AB8634B-6E20-400D-BF6D-3E3E89324894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AB8634B-6E20-400D-BF6D-3E3E89324894}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AB8634B-6E20-400D-BF6D-3E3E89324894}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AB8634B-6E20-400D-BF6D-3E3E89324894}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
