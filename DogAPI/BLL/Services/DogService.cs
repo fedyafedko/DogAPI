@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BLL.Services.Interfaces;
 using Common.DTO.DogDTO;
+using Common.ExtensionMethods;
 using DAL.Repositories.Interfaces;
 using Entities;
 
@@ -63,11 +64,27 @@ public class DogService : IDogService
 
     public List<DogDTO> GetDogs(string attribute, string? order)
     {
-        throw new NotImplementedException();
+        var dogs = _repository.Table.AsQueryable();
+        
+        var source = dogs.OrderByAttribute(attribute, order!).ToList();
+        
+        var dogDTO = _mapper.Map<IEnumerable<DogDTO>>(source).ToList();
+        
+        return dogDTO;
     }
 
     public List<DogDTO> GetDogs(string attribute, string? order, int pageNumber, int pageSize)
     {
-        throw new NotImplementedException();
+        var dogs = _repository.Table.AsQueryable();
+        
+        var source = dogs.OrderByAttribute(attribute, order!).ToList();
+        
+        int totalCount = source.Count;
+        
+        if (pageSize > totalCount || pageNumber < 1 || pageSize < 1)
+            return _mapper.Map<IEnumerable<DogDTO>>(source).ToList();
+        
+        source = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+        return _mapper.Map<IEnumerable<DogDTO>>(source).ToList();
     }
 }
