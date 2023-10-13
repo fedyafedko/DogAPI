@@ -26,7 +26,7 @@ public class DogController : ControllerBase
 
     [HttpPost("dog")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> InsertDog(AddDogDTO dog)
+    public async Task<IActionResult> InsertDog(CreateDogDTO dog)
     {
         try
         {

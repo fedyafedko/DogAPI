@@ -9,7 +9,7 @@ public class DogProfile : Profile
     public DogProfile()
     {
         CreateMap<Dog, DogDTO>();
-        CreateMap<AddDogDTO, Dog>();
+        CreateMap<CreateDogDTO, Dog>();
         CreateMap<UpdateDogDTO, Dog>();
     }
 }

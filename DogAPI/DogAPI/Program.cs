@@ -7,6 +7,10 @@ using Common.Models;
 using DAL.EF;
 using DAL.Repositories;
 using DAL.Repositories.Interfaces;
+using DogAPI.Validators;
+using DogAPI.Validators.UserValidator;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -33,6 +37,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDogService, DogService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Validators
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateDogValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateDogValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginUserValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

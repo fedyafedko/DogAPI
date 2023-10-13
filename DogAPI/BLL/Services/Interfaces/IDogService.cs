@@ -4,7 +4,7 @@ namespace BLL.Services.Interfaces;
 
 public interface IDogService
 {
-    Task<DogDTO> AddDog(AddDogDTO dog);
+    Task<DogDTO> AddDog(CreateDogDTO dog);
     List<DogDTO> GetDogs();
     Task<DogDTO?> GetDogByName(string name);
     Task<bool> DeleteDog(string name);

@@ -18,7 +18,7 @@ public class DogService : IDogService
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
-    public async Task<DogDTO> AddDog(AddDogDTO dog)
+    public async Task<DogDTO> AddDog(CreateDogDTO dog)
     {
         Dog entity = _mapper.Map<Dog>(dog);
         if (await _repository.Table.FindAsync(entity.Name) != null)
