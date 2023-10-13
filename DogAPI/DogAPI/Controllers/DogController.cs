@@ -1,12 +1,13 @@
 ﻿using BLL.Services.Interfaces;
 using Common.DTO.DogDTO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DogAPI.Controllers;
 
 [Route("/")]
 [ApiController]
-
 public class DogController : ControllerBase
 {
     private readonly IDogService _dogService;
@@ -15,15 +16,16 @@ public class DogController : ControllerBase
     {
         _dogService = dogService;
     }
-    
+
     [HttpGet("dog/{name}")]
     public async Task<IActionResult> GetDogByName(string name)
     {
         return Ok(await _dogService.GetDogByName(name));
     }
 
-    
+
     [HttpPost("dog")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> InsertDog(AddDogDTO dog)
     {
         try
@@ -36,7 +38,7 @@ public class DogController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-    
+
     [HttpPut("dog/{name}")]
     public async Task<IActionResult> UpdateDog(string name, [FromBody] UpdateDogDTO dog)
     {
@@ -59,7 +61,7 @@ public class DogController : ControllerBase
     {
         return await _dogService.DeleteDog(name) ? Ok() : NotFound();
     }
-    
+
     [HttpGet("dogs")]
     public IActionResult GetAll([FromQuery] string? attribute = null,
         [FromQuery] string? order = null,

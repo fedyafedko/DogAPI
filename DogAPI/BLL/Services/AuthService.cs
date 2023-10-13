@@ -46,7 +46,8 @@ public class AuthService : IAuthService
         if (existingUser != null)
             throw new InvalidOperationException(user.Login);
 
-        var newUser = new User() {
+        var newUser = new User()
+        {
             Login = user.Login,
             PasswordHash = hashedPassword,
         };
@@ -54,7 +55,7 @@ public class AuthService : IAuthService
 
         return new AuthSuccessDTO(GenerateJwtToken(newUser));
     }
-    
+
     private string GenerateJwtToken(User user)
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
