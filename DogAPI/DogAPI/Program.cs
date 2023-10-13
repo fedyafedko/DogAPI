@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 
 // Repositories
 builder.Services.AddScoped<IDogRepository, DogRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Service
 builder.Services.AddScoped<IDogService, DogService>();
