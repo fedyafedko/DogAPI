@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using System.Threading.RateLimiting;
 using BLL.Profiles;
 using BLL.Services;
 using BLL.Services.Interfaces;
@@ -45,6 +46,23 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateDogValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateDogValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginUserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
+
+//RateLimiter
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(content => 
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: content.Request.Headers.Host.ToString(),
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 10,
+                QueueLimit = 0,
+                Window = TimeSpan.FromSeconds(1)
+                    
+            }));
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -106,6 +124,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 
