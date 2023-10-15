@@ -6,6 +6,7 @@ public static class Sort
 {
     public static IQueryable<Dog> OrderByAttribute(this IQueryable<Dog> source, string attribute, string order)
     {
+        // ToDo: try reflection implementation
         switch (attribute.ToLower())
         {
             case "name":

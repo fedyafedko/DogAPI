@@ -23,7 +23,6 @@ public class DogController : ControllerBase
         return Ok(await _dogService.GetDogByName(name));
     }
 
-
     [HttpPost("dog")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> InsertDog(CreateDogDTO dog)

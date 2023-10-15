@@ -7,7 +7,7 @@ public class User
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Login { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
 }
