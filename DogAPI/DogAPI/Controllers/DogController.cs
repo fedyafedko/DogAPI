@@ -71,8 +71,8 @@ public class DogController : ControllerBase
         try
         {
             var result = pageNumber == null || pageSize == null
-                ? _dogService.GetDogs(attribute ?? "name", order)
-                : _dogService.GetDogs(attribute ?? "name", order, pageNumber!.Value, pageSize!.Value);
+                ? _dogService.GetDogs(attribute ?? "name", order ?? "asc")
+                : _dogService.GetDogs(attribute ?? "name", order ?? "asc", pageNumber!.Value, pageSize!.Value);
             return Ok(result);
         }
         catch (Exception ex)
