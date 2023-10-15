@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories;
 
-// ToDo: replace int Id with Guid
 public class UserRepository : Repo<User, Guid>, IUserRepository
 {
     public UserRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext) { }

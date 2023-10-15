@@ -34,7 +34,7 @@ namespace UnitTest
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnedDog = Assert.IsType<DogDTO>(okResult.Value);
-
+            // ToDo: Use FluentAssertions instead
             Assert.Equal(dogDto, returnedDog);
         }
 
@@ -160,7 +160,7 @@ namespace UnitTest
                 new DogDTO { Name = "Rex", Color = "Black", TailLength = 15, Weight = 25 }
             };
 
-            _mockDogService.Setup(service => service.GetDogs("name", "asc", 1, 10)).Returns(dogDtos);
+            _mockDogService.Setup(service => service.GetDogs("name", 1, 10, "asc")).Returns(dogDtos);
 
             // Act
             var result = _dogController.GetAll("name", "asc", 1, 10);

@@ -1,5 +1,7 @@
 ﻿using BLL.Services.Interfaces;
+using Common;
 using Common.DTO.DogDTO;
+using Common.Enum;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,16 +69,34 @@ public class DogController : ControllerBase
         [FromQuery] int? pageNumber = null,
         [FromQuery] int? pageSize = null)
     {
+        if (pageNumber.HasValue ^ pageSize.HasValue)
+        {
+            return BadRequest("Not found parameters for pagination");
+        }
+        
         try
         {
-            var result = pageNumber == null || pageSize == null
-                ? _dogService.GetDogs(attribute ?? "name", order ?? "asc")
-                : _dogService.GetDogs(attribute ?? "name", order ?? "asc", pageNumber!.Value, pageSize!.Value);
+            var request = new GetDogsRequest
+            {
+                Attribute = string.IsNullOrWhiteSpace(attribute) ? null : attribute,
+                Order = GetOrderByAbbreviation(order),
+                Pagination = pageNumber != null && pageSize != null
+                    ? new PaginationModel(pageNumber.Value, pageSize.Value)
+                    : null
+            };
+
+            var result = _dogService.GetDogs(request);
+            
             return Ok(result);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
+    }
+
+    private Order GetOrderByAbbreviation(string? value)
+    {
+        return value?.ToLower() == "desc" ? Order.Descending : Order.Ascending;
     }
 }

@@ -1,9 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Reflection;
+using AutoMapper;
 using BLL.Services.Interfaces;
+using Common;
 using Common.DTO.DogDTO;
 using Common.ExtensionMethods;
 using DAL.Repositories.Interfaces;
 using Entities;
+using Entities.Attributes;
 
 namespace BLL.Services;
 
@@ -17,10 +20,10 @@ public class DogService : IDogService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
-    
+
     public async Task<DogDTO> AddDog(CreateDogDTO dog)
     {
-        Dog entity = _mapper.Map<Dog>(dog);
+        var entity = _mapper.Map<Dog>(dog);
         if (await _repository.Table.FindAsync(entity.Name) != null)
             throw new InvalidOperationException("Entity with such key already exists in database");
 
@@ -28,27 +31,21 @@ public class DogService : IDogService
         return _mapper.Map<DogDTO>(entity);
     }
 
-    public List<DogDTO> GetDogs()
-    {
-        return _mapper.Map<IEnumerable<DogDTO>>(_repository.GetAll()).ToList();
-    }
-
     public async Task<DogDTO?> GetDogByName(string name)
     {
-        Dog? dog = await _repository.FindAsync(name);
+        var dog = await _repository.FindAsync(name);
         return dog != null ? _mapper.Map<DogDTO>(dog) : null;
-
     }
 
     public async Task<bool> DeleteDog(string name)
     {
-        Dog? dog = await _repository.FindAsync(name);
+        var dog = await _repository.FindAsync(name);
         return dog != null && await _repository.DeleteAsync(dog) > 0;
     }
 
     public async Task<DogDTO> UpdateDog(string name, UpdateDogDTO dog)
     {
-        Dog? entity = await _repository.FindAsync(name);
+        var entity = await _repository.FindAsync(name);
 
         if (entity == null)
         {
@@ -62,29 +59,31 @@ public class DogService : IDogService
         return _mapper.Map<DogDTO>(entity);
     }
 
-    public List<DogDTO> GetDogs(string attribute, string? order)
+    public List<DogDTO> GetDogs(GetDogsRequest request)
     {
         var dogs = _repository.Table.AsQueryable();
-        
-        var source = dogs.OrderByAttribute(attribute, order!).ToList();
-        
-        var dogDTO = _mapper.Map<IEnumerable<DogDTO>>(source).ToList();
-        
-        return dogDTO;
-    }
 
-    public List<DogDTO> GetDogs(string attribute, string? order, int pageNumber, int pageSize)
-    {
-        var dogs = _repository.Table.AsQueryable();
+        request.Attribute ??= typeof(Dog).GetProperties()
+            .FirstOrDefault(prop => prop.GetCustomAttribute<BaseSortAttribute>() != null)?.Name;
+
+        var source = dogs.OrderByAttribute(request.Attribute ?? "name", request.Order);
+
+        int totalCount = source.Count();
         
-        var source = dogs.OrderByAttribute(attribute, order!).ToList();
-        
-        int totalCount = source.Count;
-        
-        if (pageSize > totalCount || pageNumber < 1 || pageSize < 1)
-            return _mapper.Map<IEnumerable<DogDTO>>(source).ToList();
-        
-        source = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-        return _mapper.Map<IEnumerable<DogDTO>>(source).ToList();
+        if (request.Pagination != null)
+        {
+            if (request.Pagination.PageSize > totalCount 
+                || request.Pagination.PageNumber < 1
+                || request.Pagination.PageSize < 1)
+            {
+                return _mapper.Map<List<DogDTO>>(source.ToList());
+            }
+
+            source = source
+                .Skip((request.Pagination.PageNumber - 1) * request.Pagination.PageSize)
+                .Take(request.Pagination.PageSize);
+        }
+
+        return _mapper.Map<List<DogDTO>>(source.ToList());
     }
 }
