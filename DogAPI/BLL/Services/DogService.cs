@@ -24,7 +24,7 @@ public class DogService : IDogService
     public async Task<DogDTO> AddDog(CreateDogDTO dog)
     {
         var entity = _mapper.Map<Dog>(dog);
-        if (await _repository.Table.FindAsync(entity.Name) != null)
+        if (await _repository.FindAsync(entity.Name) != null)
             throw new InvalidOperationException("Entity with such key already exists in database");
 
         await _repository.AddAsync(entity);

@@ -5,11 +5,8 @@ namespace Common.ExtensionMethods;
 
 public static class Sort
 {
-        // ToDo: try reflection implementation
     public static IQueryable<Dog> OrderByAttribute(this IQueryable<Dog> source, string attribute, Order order)
     {
-        
-        
         switch (attribute.ToLower())
         {
             case "name":
