@@ -56,9 +56,9 @@ builder.Services.AddRateLimiter(options =>
             factory: partition => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit = 10,
+                PermitLimit = 1,
                 QueueLimit = 0,
-                Window = TimeSpan.FromSeconds(1)
+                Window = TimeSpan.FromSeconds(10)
                     
             }));
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -99,7 +99,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            ClockSkew = TimeSpan.Zero,
+            ClockSkew = TimeSpan.FromSeconds(5),
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,

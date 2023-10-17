@@ -26,12 +26,12 @@ public class AuthService : IAuthService
 
     public async Task<AuthSuccessDTO> LoginAsync(LoginUserDTO user)
     {
-        string hashedPassword = _hasher.HashPassword(user.Password);
         var existingUser = await _repository.FindByLoginAsync(user.Login);
 
         if (existingUser == null)
-            throw new KeyNotFoundException(user.Login);
+            throw new KeyNotFoundException( $"Unable to find user with login {user.Login}");
 
+        string hashedPassword = _hasher.HashPassword(user.Password);
         if (BCrypt.Net.BCrypt.Verify(hashedPassword, existingUser.PasswordHash))
             throw new UnauthorizedAccessException(user.Login);
 
@@ -40,6 +40,9 @@ public class AuthService : IAuthService
 
     public async Task<AuthSuccessDTO> RegisterAsync(RegisterUserDTO user)
     {
+        if (await _repository.FindByLoginAsync(user.Login) != null)
+            throw new InvalidOperationException("User with current login already registered");
+        
         string hashedPassword = _hasher.HashPassword(user.Password);
         var existingUser = await _repository.FindByLoginAsync(user.Login);
 
@@ -68,7 +71,7 @@ public class AuthService : IAuthService
                 new Claim("login", user.Login),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             }),
-            Expires = DateTime.UtcNow.AddHours(2),
+            Expires = DateTime.UtcNow.Add(_settings.ExpiresIn),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _settings.Issuer,

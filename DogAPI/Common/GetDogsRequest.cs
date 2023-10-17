@@ -1,4 +1,4 @@
-﻿using Common.Enum;
+﻿using Common.Enums;
 
 namespace Common;
 
@@ -11,4 +11,4 @@ public class GetDogsRequest
     public PaginationModel? Pagination { get; set; }
 }
 
-public record PaginationModel(int PageSize, int PageNumber);
+public record PaginationModel(int PageNumber, int PageSize);

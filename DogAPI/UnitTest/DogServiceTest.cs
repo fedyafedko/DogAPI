@@ -3,7 +3,7 @@ using BLL.Services;
 using BLL.Services.Interfaces;
 using Common;
 using Common.DTO.DogDTO;
-using Common.Enum;
+using Common.Enums;
 using DAL.Repositories.Interfaces;
 using Entities;
 using Xunit;
@@ -220,7 +220,7 @@ public class DogServiceTest
     }
 
     [Fact]
-    public void GetDogs_Should_Return_All_Dogs_When_No_Pagination_Or_Sorting()
+    public async Task GetDogs_Should_Return_All_Dogs_When_No_Pagination_Or_Sorting()
     {
         // Arrange
         var table = Substitute.For<DbSet<Dog>, IQueryable<Dog>>();
@@ -254,20 +254,12 @@ public class DogServiceTest
     [Fact]
     public void GetDogs_Should_Paginate_And_Sort_If_Requested()
     {
-        var table = Substitute.For<DbSet<Dog>, IQueryable<Dog>>();
-            
         var dogsList = new List<Dog>
         {
             new Dog { Name = "Fido", Color = "Brown", TailLength = 10, Weight = 50 },
             new Dog { Name = "Rex", Color = "Black", TailLength = 12, Weight = 60 },
             new Dog { Name = "Max", Color = "White", TailLength = 8, Weight = 45 },
         };
-            
-        var queryable = dogsList.AsQueryable();
-        ((IQueryable<Dog>)table).Provider.Returns(queryable.Provider);
-        ((IQueryable<Dog>)table).Expression.Returns(queryable.Expression);
-        ((IQueryable<Dog>)table).ElementType.Returns(queryable.ElementType);
-        ((IQueryable<Dog>)table).GetEnumerator().Returns(queryable.GetEnumerator());
 
         var request = new GetDogsRequest
         {   

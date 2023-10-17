@@ -1,7 +1,7 @@
 ﻿using BLL.Services.Interfaces;
 using Common;
 using Common.DTO.DogDTO;
-using Common.Enum;
+using Common.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +49,7 @@ public class DogController : ControllerBase
         }
         catch (KeyNotFoundException)
         {
-            return NotFound(name);
+            return NotFound($"Unable to found dog with name {name}");
         }
         catch (Exception ex)
         {
@@ -60,7 +60,7 @@ public class DogController : ControllerBase
     [HttpDelete("dog/{name}")]
     public async Task<IActionResult> DeleteDog(string name)
     {
-        return await _dogService.DeleteDog(name) ? Ok() : NotFound();
+        return await _dogService.DeleteDog(name) ? NoContent() : NotFound();
     }
 
     [HttpGet("dogs")]
@@ -71,7 +71,7 @@ public class DogController : ControllerBase
     {
         if (pageNumber.HasValue ^ pageSize.HasValue)
         {
-            return BadRequest("Not found parameters for pagination");
+            return BadRequest("Not enough parameters for pagination");
         }
         
         try
@@ -79,7 +79,7 @@ public class DogController : ControllerBase
             var request = new GetDogsRequest
             {
                 Attribute = string.IsNullOrWhiteSpace(attribute) ? null : attribute,
-                Order = GetOrderByAbbreviation(order),
+                Order = order.ToOrder(),
                 Pagination = pageNumber != null && pageSize != null
                     ? new PaginationModel(pageNumber.Value, pageSize.Value)
                     : null
@@ -93,10 +93,5 @@ public class DogController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-    }
-
-    private Order GetOrderByAbbreviation(string? value)
-    {
-        return value?.ToLower() == "desc" ? Order.Descending : Order.Ascending;
     }
 }

@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using AutoMapper;
 using BLL.Services.Interfaces;
 using Common;
 using Common.DTO.DogDTO;
-using Common.ExtensionMethods;
+using Common.Enums;
+using Common.Extensions;
 using DAL.Repositories.Interfaces;
 using Entities;
 using Entities.Attributes;
@@ -66,17 +68,19 @@ public class DogService : IDogService
         request.Attribute ??= typeof(Dog).GetProperties()
             .FirstOrDefault(prop => prop.GetCustomAttribute<BaseSortAttribute>() != null)?.Name;
 
-        var source = dogs.OrderByAttribute(request.Attribute ?? "name", request.Order);
+        var source = dogs.OrderByAttribute(
+            request.Attribute?.ToEnum<DogOrderingProperty>() ??
+            throw new InvalidOperationException("Unable to find attribute"),
+            request.Order);
 
-        int totalCount = source.Count();
-        
+        var totalCount = source.Count();
+
         if (request.Pagination != null)
         {
-            if (request.Pagination.PageSize > totalCount 
-                || request.Pagination.PageNumber < 1
+            if (request.Pagination.PageNumber < 1
                 || request.Pagination.PageSize < 1)
             {
-                return _mapper.Map<List<DogDTO>>(source.ToList());
+                return new List<DogDTO>();
             }
 
             source = source
@@ -84,6 +88,8 @@ public class DogService : IDogService
                 .Take(request.Pagination.PageSize);
         }
 
+        // Unable to mock Table, that's why using ToListAsync
+        // Would be pleased to get help here <3
         return _mapper.Map<List<DogDTO>>(source.ToList());
     }
 }

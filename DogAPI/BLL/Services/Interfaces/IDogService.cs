@@ -1,6 +1,5 @@
 ﻿using Common;
 using Common.DTO.DogDTO;
-using Common.Enum;
 
 namespace BLL.Services.Interfaces;
 
